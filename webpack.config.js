@@ -26,5 +26,7 @@ module.exports = {
       'chokidar',
       'datauri'
     ])
-  ]
+  ],
+  watch: true
+  
 };
