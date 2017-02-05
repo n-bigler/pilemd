@@ -390,11 +390,12 @@ function copyData(fromDir, toDir) {
 
 
 class Image {
-  constructor (pilemdURL) {
+  constructor (pilemdURL, name) {
     if (!pilemdURL.startsWith('pilemd://images/')) {
       throw "Incorrect Image URL"
     }
     this.pilemdURL = pilemdURL
+    this.name = name
   }
 
   makeFilePath() {
@@ -437,7 +438,31 @@ class Image {
     } catch(e) {}  // If not exists
     fs.writeFileSync(savePath, fs.readFileSync(frompath));
     var relativePath = path.join('images', name);
-    return new this('pilemd://' + relativePath);
+    return new this('pilemd://' + relativePath, name);
+  }
+
+  static fromClipboard(im){
+    //create a name based on current date and save it.
+    var d = new Date();
+    var name = d.getFullYear().toString() + (d.getMonth()+1).toString()
+        + d.getDate().toString() + '_' + d.getHours().toString()
+        +d.getMinutes().toString() + d.getSeconds().toString() + ".png";
+
+    var dirPath = path.join(getBaseLibraryPath(), 'images');
+    try {fs.mkdirSync(dirPath)} catch (e) {}
+
+    var savePath = path.join(dirPath, name);
+    // Check exists or not.
+    try {
+      var fd = fs.openSync(savePath, 'r');
+      if (fd) {fs.close(fd)}
+      name = this.appendSuffix(name);
+      savePath = path.join(dirPath, name);
+    } catch(e) {}  // If not exists
+    fs.writeFileSync(savePath, im.toPNG());
+    var relativePath = path.join('images', name);
+    console.log(name);
+    return new this('pilemd://' + relativePath, name);
   }
 }
 
