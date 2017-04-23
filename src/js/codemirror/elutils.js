@@ -54,6 +54,10 @@ function pasteText(cm) {
       var f = {name: pasted.split('/').pop(), path: pasted};
       uploadFile(cm, f);
     }
+		else {
+			//this is normal text (not an image)
+			cm.doc.replaceRange(cm, cm.doc.getCursor());
+		}
   }
 }
 
